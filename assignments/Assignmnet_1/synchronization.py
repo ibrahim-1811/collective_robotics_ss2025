@@ -65,16 +65,17 @@ for r in vicinities:
     avg_neighbors_dict[r] = avg_nb
     print(f"Vicinity r = {r}: Average Neighbors per Firefly = {avg_nb:.2f}")
 
-# Create a 2x2 grid for the subplots (2 rows, 2 columns)
-fig, axs = plt.subplots(nrows=2, ncols=2, figsize=(14, 10), sharex=True)
+fig, axs = plt.subplots(nrows=2, ncols=2, figsize=(14, 10), sharey=True)
 
 # Flatten the array of axes to index them in a simple loop.
 axs = axs.flatten()
 
+# Loop over each vicinity and plot the corresponding flashing counts with flipped axes.
 # Loop over each vicinity and plot the corresponding flashing counts.
 for idx, r in enumerate(vicinities):
-    axs[idx].plot(flashing_results[r], color='blue', linewidth=1.5)
-    axs[idx].set_ylim(0, 150)  # Fix y-axis from 0 to 150
+    axs[idx].plot(flashing_results[r][:150], color='blue', linewidth=1.5)  # only plot first 150 time steps
+    axs[idx].set_xlim(0, 150)  # x-axis: time steps from 0 to 150
+    axs[idx].set_ylim(0, N)    # y-axis: number of fireflies flashing (max = N = 250)
     axs[idx].set_title(f"r = {r}, Avg. Neighbors = {avg_neighbors_dict[r]:.2f}")
     axs[idx].set_xlabel("Time Steps")
     axs[idx].set_ylabel("Flashing Count")

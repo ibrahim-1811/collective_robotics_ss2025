@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>swarm_anti_agents</name>
+  <version>0.0.1</version>
+  <description>Swarm robot package with anti-agent behavior</description>
+  <maintainer email="your_email@example.com">Your Name</maintainer>
+  <license>MIT</license>
+  <export>
+    <build_type>ament_python</build_type>
+  </export>  <exec_depend>rclpy</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+</package>

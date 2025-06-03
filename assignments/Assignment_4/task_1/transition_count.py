@@ -16,61 +16,7 @@ N_TIME_STEPS_PER_RUN = 500  # Number of time steps per run
 
 # --- Transition Matrix A ---
 # transition_matrix_A[L_t, L_{t+1}] counts transitions from L_t to L_{t+1}
-matrix_A_file = "transition_matrix_A.npy"
-if os.path.exists(matrix_A_file):
-    print(f"Loading transition matrix A from {matrix_A_file}...")
-    transition_matrix_A = np.load(matrix_A_file)
-else:
-    print("Generating transition matrix A (as transition_matrix_A.npy was not found)...")
-    # ... (existing code to generate transition_matrix_A) ...
-    np.save(matrix_A_file, transition_matrix_A) # Save it if it was just generated
-    print(f"Transition matrix A generated and saved to {matrix_A_file}")
-
-def simulate_step_and_get_counts_for_A(current_positions, current_directions):
-    """
-    Simulate one time step for all locusts.
-    Returns updated positions, updated directions, L_t, and L_{t+1}.
-    """
-    L_t = np.sum(current_directions == -1)
-    new_directions = current_directions.copy()
-    for i in range(N_LOCUSTS):
-        locust_pos = current_positions[i]
-        locust_dir = current_directions[i]
-        switched_by_neighbors = False
-        neighbors = []
-        for j in range(N_LOCUSTS):
-            if i == j:
-                continue
-            dist = np.abs(current_positions[j] - locust_pos)
-            dist_wrapped = min(dist, C - dist)
-            if dist_wrapped <= PERCEPTION_RANGE:
-                neighbors.append(j)
-        if neighbors:
-            neighbor_dirs = current_directions[neighbors]
-            num_opposite = np.sum(neighbor_dirs == -locust_dir)
-            num_same = np.sum(neighbor_dirs == locust_dir)
-            if num_opposite > num_same:
-                switched_by_neighbors = True
-        switched_spontaneously = np.random.rand() < P_SWITCH_SPONTANEOUS
-        if switched_by_neighbors or switched_spontaneously:
-            new_directions[i] = -locust_dir
-    L_t_plus_1 = np.sum(new_directions == -1)
-    updated_positions = (current_positions + new_directions * SPEED) % C
-    return updated_positions, new_directions, L_t, L_t_plus_1
-
-# --- Generate Transition Matrix A from Many ABM Runs ---
-print("Generating transition matrix A (from Part B)...")
-start_time_A = time.time()
-for run_idx in range(N_RUNS):
-    current_positions_A = np.random.rand(N_LOCUSTS) * C
-    current_directions_A = np.random.choice([-1, 1], size=N_LOCUSTS)
-    for t_step in range(N_TIME_STEPS_PER_RUN - 1):
-        up_pos, up_dir, L_t_val, L_t_p1_val = \
-            simulate_step_and_get_counts_for_A(current_positions_A, current_directions_A)
-        transition_matrix_A[L_t_val, L_t_p1_val] += 1
-        current_positions_A = up_pos
-        current_directions_A = up_dir
-print(f"Matrix A generated in {time.time() - start_time_A:.2f} seconds.")
+transition_matrix_A = np.load("transition_matrix_A.npy")
 
 # --- Build Markov Model from Transition Matrix ---
 # 1. Count occurrences M[i]: number of times state i was an origin for a transition
@@ -120,6 +66,38 @@ plt.savefig("task_C_markov_model_trajectory.png")
 plt.show()
 
 # --- For Comparison: Generate a Sample Trajectory from the Full ABM (Part A) ---
+def simulate_step_and_get_counts_for_A(current_positions, current_directions):
+    """
+    Simulate one time step for all locusts.
+    Returns updated positions, updated directions, L_t, and L_{t+1}.
+    """
+    L_t = np.sum(current_directions == -1)
+    new_directions = current_directions.copy()
+    for i in range(N_LOCUSTS):
+        locust_pos = current_positions[i]
+        locust_dir = current_directions[i]
+        switched_by_neighbors = False
+        neighbors = []
+        for j in range(N_LOCUSTS):
+            if i == j:
+                continue
+            dist = np.abs(current_positions[j] - locust_pos)
+            dist_wrapped = min(dist, C - dist)
+            if dist_wrapped <= PERCEPTION_RANGE:
+                neighbors.append(j)
+        if neighbors:
+            neighbor_dirs = current_directions[neighbors]
+            num_opposite = np.sum(neighbor_dirs == -locust_dir)
+            num_same = np.sum(neighbor_dirs == locust_dir)
+            if num_opposite > num_same:
+                switched_by_neighbors = True
+        switched_spontaneously = np.random.rand() < P_SWITCH_SPONTANEOUS
+        if switched_by_neighbors or switched_spontaneously:
+            new_directions[i] = -locust_dir
+    L_t_plus_1 = np.sum(new_directions == -1)
+    updated_positions = (current_positions + new_directions * SPEED) % C
+    return updated_positions, new_directions, L_t, L_t_plus_1
+
 num_left_going_history_A = []
 positions_A_sample = np.random.rand(N_LOCUSTS) * C
 directions_A_sample = np.random.choice([-1, 1], size=N_LOCUSTS)

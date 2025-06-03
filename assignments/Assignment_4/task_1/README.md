@@ -1,111 +1,86 @@
 # Locust Swarm Simulation and Modeling
 
 ## Project Overview
-This project simulates locust swarm behavior on a ring. Locusts move, perceive neighbors, and switch directions based on local interactions and random chance. The project explores the simulation's dynamics through visualization, statistical analysis of collective behavior, and the creation of a simplified mathematical model.
+This project simulates how locusts move and interact on a ring. Each locust can see its neighbors, change direction randomly, and react to others nearby. The goal is to understand the group’s behavior using simulations, data analysis, and a simple mathematical model.
 
-The project is divided into three main tasks:
-* **Task A**: Simulating a single swarm and visualizing its behavior, focusing on the number of left-going locusts.
-* **Task B**: Running many simulations to gather statistics on how the number of left-going locusts ($L_t$) changes from one time step to the next.
-* **Task C**: Building a simpler model (a Markov chain) based on these statistics and comparing its behavior to the original, more detailed simulation.
+The project has three main parts:
+* **Task A**: Simulate one swarm and show how many locusts go left over time.
+* **Task B**: Run many simulations to see how the number of left-going locusts ($L_t$) changes from one step to the next.
+* **Task C**: Build a simple Markov model using the data from Task B and compare it to the detailed simulation.
 
 ## Files
-* `locust_visualization.py`: Simulates and visualizes a single locust swarm (Task A).
-* `multiple_runs.py`: Runs many simulations to create a transition matrix for $L_t$ (Task B).
-* `transition_count.py`: Builds and runs a Markov model using data from Task B, then compares results (Task C).
+* `locust_visualization.py`: Runs and shows one swarm (Task A).
+* `multiple_runs.py`: Runs many swarms to collect data for Task B.
+* `transition_count.py`: Uses Task B data to build and test the Markov model (Task C).
 
-## Key Simulation Parameters
-(Defined in the Python scripts)
-* **Ring Circumference (`C`)**: 1.0
-* **Locust Speed (`SPEED`)**: 0.001
-* **Perception Range (`PERCEPTION_RANGE`)**: 0.045
-* **Spontaneous Switch Probability (`P_SWITCH_SPONTANEOUS`)**: 0.015
-* **Number of Locusts (`N_LOCUSTS`)**: 20
-* **Time Steps per Run**: 500
-* **Number of Runs (for Tasks B & C)**: 1000
+## Main Simulation Settings
+* **Ring Size (`C`)**: 1.0
+* **Locust Speed**: 0.001
+* **Perception Range**: 0.045
+* **Chance to Switch Direction**: 0.015
+* **Number of Locusts**: 20
+* **Steps per Run**: 500
+* **Number of Runs (Tasks B & C)**: 1000
 
 ## Requirements
 * Python 3.x
 * NumPy
 * Matplotlib
 
-## Execution Steps and Outputs
+## How to Run and What You Get
 
-### Task A: Single Run Simulation and Visualization (`locust_visualization.py`)
-1.  **How to Run**:
+### Task A: Single Simulation (`locust_visualization.py`)
+1.  **Run**:
     ```bash
     python locust_visualization.py
     ```
-2.  **What it Does**: Simulates one group of 20 locusts for 500 time steps.
+2.  **What Happens**: Simulates 20 locusts for 500 steps.
 3.  **Outputs**:
-    * **On-screen**: An animation window with:
-        * Left: Locusts moving on a ring (colored by direction).
-        * Right: A live plot of the number of left-going locusts over time.
-    * **Saved File**:
-        * `task_A_ABM_locust_trajectory.png`: Plot of left-going locusts over time from this single run.
+    * **On screen**: Animation of locusts on a ring and a plot of left-going locusts over time.
+    * **Saved**: `task_A_ABM_locust_trajectory.png` (plot of left-going locusts).
 
-### Task B: Transition Matrix from Multiple Runs (`multiple_runs.py`)
-1.  **How to Run**:
+    ![Task A: Number of left-going locusts over time (ABM)](task_A_ABM_locust_trajectory.png)
+    <div align="center"><em>Figure: Number of left-going locusts ($L_t$) over time in a single agent-based simulation (Task A).</em></div>
+
+### Task B: Many Simulations (`multiple_runs.py`)
+1.  **Run**:
     ```bash
     python multiple_runs.py
     ```
-2.  **What it Does**: Runs 1000 separate simulations, each for 500 time steps, to see how $L_t$ (number of left-going locusts) changes. This can take some time.
+2.  **What Happens**: Runs 1000 simulations to see how $L_t$ changes. This takes a while.
 3.  **Outputs**:
-    * **On-screen**: A 2D heatmap plot showing how often $L_t$ changed to $L_{t+1}$.
-    * **Saved Files**:
-        * `task_B_transition_histogram.png`: The 2D heatmap plot.
-        * `transition_matrix_A.npy`: The raw data (counts) of transitions $L_t \rightarrow L_{t+1}$.
+    * **On screen**: Heatmap showing how $L_t$ changes.
+    * **Saved**: 
+        * `task_B_transition_histogram.png` (heatmap)
+        * `transition_matrix_A.npy` (raw data)
 
-### Task C: Markov Model Trajectory and Comparison (`transition_count.py`)
-1.  **How to Run**:
+    ![Task B: Transition heatmap](task_B_transition_histogram.png)
+    <div align="center"><em>Figure: Heatmap of transitions from $L_t$ to $L_{t+1}$ across all simulations (Task B).</em></div>
+
+### Task C: Markov Model (`transition_count.py`)
+1.  **Run**:
     ```bash
     python transition_count.py
     ```
-2.  **What it Does**:
-    * Loads `transition_matrix_A.npy` (if available from Task B) or re-generates it.
-    * Uses this data to calculate probabilities for $L_t$ changing to $L_{t+1}$.
-    * Runs a new, simpler simulation (a Markov chain) using these probabilities.
-    * Generates a trajectory from a full ABM run for direct comparison.
+2.  **What Happens**:
+    * Loads `transition_matrix_A.npy`
+    * Calculates how likely $L_t$ changes to $L_{t+1}$
+    * Runs a simple Markov simulation and compares it to the full simulation
 3.  **Outputs**:
-    * **On-screen**: Two plots:
-        1.  Trajectory of $L_t$ from the simplified Markov model.
-        2.  Trajectory of $L_t$ from a full ABM run.
-    * **Saved Files**:
-        * `task_C_markov_model_trajectory.png`: Plot from the Markov model.
-        * `task_C_ABM_comparison_trajectory.png`: Plot from the full ABM for comparison.
+    * **On screen**: Two plots—one from the Markov model, one from the full simulation.
+    * **Saved**:
+        * `task_C_markov_model_trajectory.png`
+        * `task_C_ABM_comparison_trajectory.png`
 
-## Understanding the Outputs and Model (Simplified)
+    ![Task C: Markov model trajectory](task_C_markov_model_trajectory.png)
+    <div align="center"><em>Figure: Sampled trajectory of $L_t$ from the Markov model built from Task B data (Task C).</em></div>
 
-* **Task A (`locust_visualization.py`)**: Shows how a single group of locusts behaves. You'll see them move on the ring and a graph of how many are going left over time. This gives you a feel for the basic simulation.
+    ![Task C: ABM comparison trajectory](task_C_ABM_comparison_trajectory.png)
+    <div align="center"><em>Figure: Sampled trajectory of $L_t$ from a full agent-based simulation for comparison (Task C).</em></div>
 
-* **Task B (`multiple_runs.py`)**: Summarizes how the number of left-going locusts usually changes from one moment to the next, based on many simulations. The plot (e.g., `task_B_transition_histogram.png`) shows common versus rare changes. This data (saved as `transition_matrix_A.npy`) is used to build the simpler model in Task C.
+## Summary
 
-* **Task C (`transition_count.py`)**: Uses the summary from Task B to create a simpler mathematical model (a Markov chain) of the locust swarm. It then runs this simple model and compares its behavior (plot `task_C_markov_model_trajectory.png`) to the original, more complex simulation (plot `task_C_ABM_comparison_trajectory.png`). The detailed comparison below (originally from your `task_1/README.md`) explains what to look for:
-
-    > The plot from Part C shows a trajectory of $L_t$ (number of left-going locusts) generated by a simplified Markov chain model. This model's transition probabilities $\left(P_{ij} = \frac{A[i][j]}{M[i]}\right)$ were derived from averaging the behavior of many runs (1000 runs) of the full agent-based simulation (ABM). The plot from Part A, on the other hand, shows $L_t$ from a *single run* of the full, complex ABM.
-    >
-    > Here's how they typically compare:
-    >
-    > 1.  **Overall Dynamics**:
-    >     * Both trajectories should fluctuate between $0$ and $N_{\text{LOCUSTS}}$ ($20$).
-    >     * If the system exhibits bistability (tendency to stay near $L=0$ or $L=N$), both plots might show periods where $L_t$ stays near these extremes.
-    >     * The general range and type of movement (e.g., slow drifts, occasional larger changes) should be somewhat similar if the Markov model effectively captures the essence of the ABM's dynamics for $L_t$.
-    >
-    > 2.  **Smoothness and Noise**:
-    >     * **Part A (Full ABM)**: This trajectory is the result of specific, fine-grained interactions between $20$ individual agents and their stochastic decisions in one particular simulation instance. It might appear more "jagged" or "noisy," reflecting the full stochasticity and complexity of the underlying rules at each micro-step. Unique sequences of events specific to that single run can occur.
-    >     * **Part C (Markov Model)**: This trajectory is also stochastic, but its transitions are governed by *average probabilities*. While it will still show random fluctuations, it might sometimes appear slightly "smoother" or more "prototypical" because it's less influenced by the extreme outlier behaviors of a single ABM run and more by the averaged tendencies. However, being a single realization, it can also exhibit its own unique path. The "memory" in this model is only of the immediately preceding state $L_t$.
-    >
-    > 3.  **Level of Detail**:
-    >     * The ABM (Part A) inherently contains all the details of individual locust positions, perception ranges, etc. The $L_t$ trajectory is an emergent property of these details.
-    >     * The Markov model (Part C) abstracts away all those individual details. It only cares about the current total number of left-goers ($L_t$) and the probability of transitioning to other counts ($L_{t+1}$). It cannot, by itself, explain *why* a transition occurred in terms of agent interactions.
-    >
-    > 4.  **Extreme Events/Rare Transitions**:
-    >     * The ABM, over a single run, might by chance exhibit a rare sequence of interactions leading to an unusual jump in $L_t$.
-    >     * The Markov model's $P_{ij}$ matrix reflects the frequencies of observed transitions. Very rare transitions in the ABM would correspond to very low probabilities in $P_{ij}$, making them also rare (but possible) in the Markov model's trajectory. If a transition was *never* observed in the $1000$ runs used to build $A$, it would have zero probability in $P_{ij}$ (unless specifically handled, like our $M_i[i]=0$ case).
-    >
-    > 5.  **Predictive Power**:
-    >     * The trajectory from Part A shows *one specific possibility* of how the system can evolve.
-    >     * The trajectory from Part C shows *one specific possibility* of how the *reduced model* (which represents an average behavior) can evolve. Many runs of the Markov model would give a distribution of possible $L_t$ trajectories, reflecting the uncertainty captured in $P_{ij}$.
-    >
-    > **In essence:**
-    >
-    > The Markov model trajectory (Part C) should qualitatively resemble the ABM trajectory (Part A) if the number of left-going locusts, $L$, is a "good" macroscopic variable that captures a significant portion of the system's dynamics. Discrepancies highlight aspects of the full ABM that are lost in the averaging and dimension reduction process. The Part C trajectory is an evolution based on mean-field like transition rates (empirically derived), while Part A is a direct simulation. You'd look for similarities in how often $L_t$ stays near the boundaries ($0$ or $20$), how quickly it moves across the range of values, and the typical size of fluctuations.
+- If the Markov model (Task C) looks like the full simulation (Task A), then $L$ (number of left-going locusts) is a good way to describe the group’s behavior.
+- Differences show what details are lost when using a simpler model.
+- The Markov model uses average transition rates, while the full simulation tracks every locust.
+- Look for how often $L_t$ stays near $0$ or $20$, how fast it changes, and how much it fluctuates.

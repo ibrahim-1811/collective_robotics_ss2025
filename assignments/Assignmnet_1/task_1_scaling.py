@@ -29,11 +29,48 @@ plt.show()
 print("\n--- Task 1B ---")
 
 # Function to sample from a Poisson distribution with parameter α
-def sample_poisson(alpha):
-    return np.random.poisson(alpha)
+def sample_poisson(alpha, num_samples):
+    """
+    Samples numbers of incoming data from a Poisson distribution using the poisson_probability function.
 
-alpha_test = 0.5  # Test α value
-print(f"Sample for α = {alpha_test}: {sample_poisson(alpha_test)} arrivals")
+    Parameters:
+    - alpha: The rate parameter (λ = α).
+    - num_samples: Number of samples to generate.
+
+    Returns:
+    - A list of sampled values.
+    """
+    # Define a reasonable range for X values
+    x_values = range(15)  # Adjust the range as needed
+    # Calculate probabilities using poisson_probability
+    probabilities = [poisson_probability(alpha, i) for i in x_values]
+    # Normalize probabilities to ensure they sum to 1
+    probabilities = np.array(probabilities) / sum(probabilities)
+
+    # Sample from the distribution using the calculated probabilities
+    samples = np.random.choice(x_values, size=num_samples, p=probabilities)
+    return samples
+
+# Example usage
+alpha = 0.1  # Set α value
+num_samples = 1000  # Number of samples to generate
+
+# Generate samples
+samples = sample_poisson(alpha, num_samples)
+
+print(f"Generated {num_samples} samples for α = {alpha}:")
+print(samples[:20])  # Print the first 20 samples as an example
+
+# Example 2
+alpha = 0.5  # Set α value
+num_samples = 1000  # Number of samples to generate
+
+# Generate samples
+samples = sample_poisson(alpha, num_samples)
+
+print(f"Generated {num_samples} samples for α = {alpha}:")
+print(samples[:20])  # Print the first 20 samples as an example
+
 
 # --- Task 1C: Single Simulation Run ---
 print("\n--- Task 1C ---")
@@ -41,11 +78,11 @@ print("\n--- Task 1C ---")
 # Function to simulate a data center queue
 def simulate_data_center(alpha, processing_duration, time_steps):
     waiting_list = 0  # Number of items in the waiting list
-    processing_steps_left = 0  # Steps left for the current item to finish processing
-    list_lengths = []  # To store the length of the waiting list at each time step
-
+    processing_steps_left = 0  # Steps left for the current item
+    list_lengths = []  
+    
     for _ in range(time_steps):
-        arrivals = sample_poisson(alpha)  # New arrivals at this time step
+        arrivals = sample_poisson(alpha, 1)[0]  # New arrivals at this time step
         waiting_list += arrivals  # Add arrivals to the waiting list
 
         # Process the current item if processing is ongoing
